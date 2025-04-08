@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.microsoft',
-    'cookie_consent',
     'django_bootstrap5',
     
     # Local apps
@@ -83,7 +82,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
-                'cookie_consent.context_processors.cookie_consent',
             ],
         },
     },
@@ -202,9 +200,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# Cookie Consent settings
-COOKIE_CONSENT_NAME = 'cookie_consent'
-COOKIE_CONSENT_MAX_AGE = 60 * 60 * 24 * 365  # 1 year
+# Cookie Consent settings can be added here later if needed
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

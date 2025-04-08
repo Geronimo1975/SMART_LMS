@@ -1,0 +1,38 @@
+/* Custom styles for Smart Authentication System */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar styles */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Card styles */
+.card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.card-header {
+    font-weight: 500;
+}
+
+/* Form styles */
+.form-label {
+    font-weight: 500;
+}
+
+/* Footer styles */
+footer {
+    border-top: 1px solid #eee;
+}

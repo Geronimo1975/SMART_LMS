@@ -1,26 +1,9 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import User, Profile
+from .models import UserProfile
 
-class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'role')
-    list_filter = ('is_staff', 'is_superuser', 'role')
-    fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Role', {'fields': ('role',)}),
-    )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'role'),
-        }),
-    )
-
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'bio')
-    search_fields = ('user__username', 'user__email')
-
-admin.site.register(User, CustomUserAdmin)
-admin.site.register(Profile, ProfileAdmin)
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'gdpr_consent', 'marketing_consent', 'terms_accepted', 'consent_date')
+    list_filter = ('gdpr_consent', 'marketing_consent', 'terms_accepted')
+    search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name')
+    date_hierarchy = 'consent_date'

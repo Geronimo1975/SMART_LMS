@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}Sign Up - Smart Learning Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Create Account</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'account_signup' %}">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p>Already have an account? <a href="{% url 'account_login' %}">Sign In</a></p>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <hr class="flex-grow-1">
+                        <span class="px-2">OR</span>
+                        <hr class="flex-grow-1">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'socialaccount_signup' %}?provider=google" class="btn btn-outline-danger">
+                            <i class="bi bi-google"></i> Sign up with Google
+                        </a>
+                        <a href="{% url 'socialaccount_signup' %}?provider=microsoft" class="btn btn-outline-primary">
+                            <i class="bi bi-microsoft"></i> Sign up with Microsoft
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

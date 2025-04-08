@@ -1,137 +1,50 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
 
-{% block title %}Profile - UNI_online{% endblock %}
-{% block header_title %}Profile{% endblock %}
+{% block title %}My Profile - Smart Learning Platform{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="profile-header">
-        <div>
-            {% if profile.avatar %}
-            <img src="{{ profile.avatar.url }}" alt="{{ user.username }}'s avatar" class="avatar avatar-xl">
-            {% else %}
-            <img src="/static/svg/default_avatar.svg" alt="{{ user.username }}'s avatar" class="avatar avatar-xl">
-            {% endif %}
-        </div>
-        <div class="profile-info">
-            <h1>{{ user.get_full_name }}</h1>
-            <p class="text-muted">{{ user.username }}</p>
-            <p class="text-muted">{{ user.email }}</p>
-            <p class="text-muted">
-                {% if user.role == 'teacher' %}
-                <span class="badge badge-primary">Teacher</span>
-                {% elif user.role == 'student' %}
-                <span class="badge badge-secondary">Student</span>
-                {% elif user.role == 'admin' %}
-                <span class="badge badge-danger">Admin</span>
-                {% endif %}
-            </p>
-            
-            <a href="{% url 'profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+<div class="row">
+    <div class="col-lg-3">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Profile</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <div class="bg-light rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
+                        <span class="display-4 text-muted">{{ user.first_name|first }}{{ user.last_name|first }}</span>
+                    </div>
+                </div>
+                <h4 class="text-center">{{ user.first_name }} {{ user.last_name }}</h4>
+                <p class="text-center text-muted">{{ user.email }}</p>
+                <hr>
+                <div class="small">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+                </div>
+            </div>
         </div>
     </div>
     
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Profile Details</h3>
-        </div>
-        <div class="card-body">
-            {% if profile.bio %}
-            <h4>Bio</h4>
-            <p>{{ profile.bio }}</p>
-            {% endif %}
-            
-            {% if user.role == 'teacher' %}
-                {% if profile.title %}
-                <h4>Title</h4>
-                <p>{{ profile.title }}</p>
-                {% endif %}
-                
-                {% if profile.department %}
-                <h4>Department</h4>
-                <p>{{ profile.department }}</p>
-                {% endif %}
-                
-                {% if profile.office_hours %}
-                <h4>Office Hours</h4>
-                <p>{{ profile.office_hours }}</p>
-                {% endif %}
-            {% endif %}
-        </div>
-    </div>
-    
-    {% if user.role == 'teacher' %}
-    <div class="card mt-4">
-        <div class="card-header">
-            <h3 class="card-title">Courses Teaching</h3>
-        </div>
-        <div class="card-body">
-            {% if user.courses_teaching.all %}
-                <div class="course-list">
-                    {% for course in user.courses_teaching.all %}
-                    <div class="card course-card">
-                        <div class="card-body">
-                            <div class="course-card-header">
-                                <div>
-                                    <div class="course-code">{{ course.code }}</div>
-                                    <h4>{{ course.title }}</h4>
-                                </div>
-                                {% if course.is_active %}
-                                <span class="status-indicator status-active" title="Active"></span>
-                                {% else %}
-                                <span class="status-indicator status-inactive" title="Inactive"></span>
-                                {% endif %}
-                            </div>
-                            <p>{{ course.description|truncatechars:100 }}</p>
-                            <div class="course-card-footer">
-                                <small class="text-muted">{{ course.start_date|date:"M d, Y" }} - {{ course.end_date|date:"M d, Y" }}</small>
-                                <a href="{% url 'course_detail' pk=course.pk %}" class="btn btn-sm btn-primary">View</a>
-                            </div>
-                        </div>
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Edit Profile</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <h5 class="mb-3">Privacy Settings</h5>
+                    {% bootstrap_form form %}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>You are not teaching any courses yet.</p>
-                <a href="{% url 'course_create' %}" class="btn btn-primary">Create Course</a>
-            {% endif %}
+                </form>
+            </div>
         </div>
     </div>
-    {% elif user.role == 'student' %}
-    <div class="card mt-4">
-        <div class="card-header">
-            <h3 class="card-title">Enrolled Courses</h3>
-        </div>
-        <div class="card-body">
-            {% if user.enrollments.all %}
-                <div class="course-list">
-                    {% for enrollment in user.enrollments.all %}
-                    {% if enrollment.is_active %}
-                    <div class="card course-card">
-                        <div class="card-body">
-                            <div class="course-card-header">
-                                <div>
-                                    <div class="course-code">{{ enrollment.course.code }}</div>
-                                    <h4>{{ enrollment.course.title }}</h4>
-                                </div>
-                                <span class="status-indicator status-active" title="Enrolled"></span>
-                            </div>
-                            <p>{{ enrollment.course.description|truncatechars:100 }}</p>
-                            <div class="course-card-footer">
-                                <small class="text-muted">{{ enrollment.course.start_date|date:"M d, Y" }} - {{ enrollment.course.end_date|date:"M d, Y" }}</small>
-                                <a href="{% url 'course_detail' pk=enrollment.course.pk %}" class="btn btn-sm btn-primary">View</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>You are not enrolled in any courses yet.</p>
-                <a href="{% url 'course_list' %}" class="btn btn-primary">Browse Courses</a>
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

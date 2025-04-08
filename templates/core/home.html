@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Smart Authentication System{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-4 rounded">
+    <h1 class="display-4">Welcome to Smart LMS</h1>
+    <p class="lead">A secure, modern learning management system with industry-standard authentication and GDPR compliance.</p>
+    <hr class="my-4">
+    <p>Get started by creating an account or sign in with your existing credentials.</p>
+    {% if not user.is_authenticated %}
+    <div class="d-flex gap-2 mt-3">
+        <a href="{% url 'account_login' %}" class="btn btn-primary">Login</a>
+        <a href="{% url 'account_signup' %}" class="btn btn-outline-primary">Sign Up</a>
+    </div>
+    {% else %}
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+    {% endif %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Secure Authentication</h5>
+                <p class="card-text">Our platform includes industry-standard security practices with multiple authentication options.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">GDPR Compliant</h5>
+                <p class="card-text">We take data privacy seriously and comply with all GDPR requirements.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Social Login</h5>
+                <p class="card-text">Sign in with your Google or Microsoft account for convenient access.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

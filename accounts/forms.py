@@ -1,48 +1,53 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import User, Profile
-from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+from allauth.account.forms import SignupForm
+from .models import UserProfile
 
-class UserRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    role = forms.ChoiceField(choices=User.ROLE_CHOICES, required=True)
-
+class UserProfileForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2', 'first_name', 'last_name', 'role']
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise ValidationError('Email already in use.')
-        return email
-
-class UserLoginForm(AuthenticationForm):
-    username = forms.CharField(label='Username or Email')
-    
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        # Check if the username is actually an email
-        if '@' in username:
-            try:
-                user = User.objects.get(email=username)
-                return user.username
-            except User.DoesNotExist:
-                pass
-        return username
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['bio', 'avatar']
+        model = UserProfile
+        fields = ['gdpr_consent', 'marketing_consent', 'terms_accepted']
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'gdpr_consent': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'marketing_consent': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'terms_accepted': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        labels = {
+            'gdpr_consent': 'I consent to my personal data being processed as described in the Privacy Policy',
+            'marketing_consent': 'I would like to receive marketing information about products and services',
+            'terms_accepted': 'I accept the Terms and Conditions',
         }
 
-class TeacherProfileForm(ProfileForm):
-    title = forms.CharField(max_length=100, required=False, help_text="Your academic or professional title")
-    department = forms.CharField(max_length=100, required=False)
-    office_hours = forms.CharField(max_length=255, required=False, help_text="e.g., Mon-Wed 2-4pm or By appointment")
-    
-    class Meta(ProfileForm.Meta):
-        fields = ProfileForm.Meta.fields + ['title', 'department', 'office_hours']
+class CustomSignupForm(SignupForm):
+    first_name = forms.CharField(max_length=30, label='First Name', required=True)
+    last_name = forms.CharField(max_length=30, label='Last Name', required=True)
+    gdpr_consent = forms.BooleanField(
+        required=True,
+        label='I consent to my personal data being processed as described in the Privacy Policy',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    marketing_consent = forms.BooleanField(
+        required=False,
+        label='I would like to receive marketing information about products and services',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    terms_accepted = forms.BooleanField(
+        required=True,
+        label='I accept the Terms and Conditions',
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
+    def save(self, request):
+        user = super(CustomSignupForm, self).save(request)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.save()
+        
+        # Get profile
+        profile = user.profile
+        profile.gdpr_consent = self.cleaned_data.get('gdpr_consent', False)
+        profile.marketing_consent = self.cleaned_data.get('marketing_consent', False)
+        profile.terms_accepted = self.cleaned_data.get('terms_accepted', False)
+        profile.save()
+        
+        return user

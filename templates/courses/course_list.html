@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Courses</h1>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        {% if teaching_courses %}
+        <div class="mb-5">
+            <h2 class="mb-3">Courses You Teach</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for course in teaching_courses %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if course.image %}
+                        <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                        {% else %}
+                        <div class="card-img-top bg-light text-center py-5">
+                            <i class="bi bi-book" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <a href="{% url 'course_detail' slug=course.slug %}" class="btn btn-primary">Manage Course</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if enrolled_courses %}
+        <div class="mb-5">
+            <h2 class="mb-3">Your Enrolled Courses</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for course in enrolled_courses %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if course.image %}
+                        <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                        {% else %}
+                        <div class="card-img-top bg-light text-center py-5">
+                            <i class="bi bi-book" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <a href="{% url 'course_detail' slug=course.slug %}" class="btn btn-primary">Go to Course</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    {% if available_courses %}
+    <div>
+        <h2 class="mb-3">Available Courses</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for course in available_courses %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                    {% else %}
+                    <div class="card-img-top bg-light text-center py-5">
+                        <i class="bi bi-book" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                        <p class="text-muted">Instructor: {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="{% url 'course_detail' slug=course.slug %}" class="btn btn-outline-primary">View Details</a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'enroll_course' slug=course.slug %}" class="btn btn-success">Enroll</a>
+                        {% else %}
+                        <a href="{% url 'account_login' %}?next={% url 'enroll_course' slug=course.slug %}" class="btn btn-success">Sign in to Enroll</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No courses available at the moment. Please check back later.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

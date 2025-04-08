@@ -11,8 +11,9 @@ class UserProfile(models.Model):
     consent_date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f'{self.user.username} Profile'
+        return f"{self.user.username}'s profile"
 
+# Signal handlers to create or update a user profile when a user is created or updated
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

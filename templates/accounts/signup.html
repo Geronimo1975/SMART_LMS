@@ -1,42 +1,77 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
+{% load crispy_forms_tags %}
 
-{% block title %}Sign Up - Smart Learning Platform{% endblock %}
+{% block title %}Sign Up - LMS Platform{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-6 col-md-8">
-        <div class="card shadow">
+    <div class="col-md-8">
+        <div class="card">
             <div class="card-header bg-primary text-white">
-                <h3 class="mb-0">Create Account</h3>
+                <h4 class="mb-0">Create an Account</h4>
             </div>
             <div class="card-body">
-                <form method="post" action="{% url 'account_signup' %}">
+                <p class="mb-4">Please fill out the form below to create your account. Required fields are marked with an asterisk (*).</p>
+                
+                <form method="post">
                     {% csrf_token %}
-                    {% bootstrap_form form %}
                     
-                    <div class="d-grid gap-2 mt-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.first_name|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.last_name|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.username|as_crispy_field }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email|as_crispy_field }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.password1|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.password2|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="border p-3 mb-3">
+                        <h5>Privacy and Terms</h5>
+                        <div class="mb-3">
+                            {{ form.gdpr_consent|as_crispy_field }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.marketing_consent|as_crispy_field }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.terms_accepted|as_crispy_field }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Sign Up</button>
                     </div>
                 </form>
                 
-                <div class="mt-4 text-center">
-                    <p>Already have an account? <a href="{% url 'account_login' %}">Sign In</a></p>
+                <div class="text-center mt-4">
+                    <p>Already have an account? <a href="{% url 'account_login' %}">Log in here</a></p>
                 </div>
                 
-                <div class="mt-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <hr class="flex-grow-1">
-                        <span class="px-2">OR</span>
-                        <hr class="flex-grow-1">
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'socialaccount_signup' %}?provider=google" class="btn btn-outline-danger">
-                            <i class="bi bi-google"></i> Sign up with Google
+                <div class="border-top pt-3 mt-4">
+                    <p class="text-center mb-3">Or sign up with:</p>
+                    <div class="d-flex justify-content-center">
+                        <a href="{% url 'socialaccount_connections' %}" class="btn btn-outline-primary mx-2">
+                            <i class="bi bi-google"></i> Google
                         </a>
-                        <a href="{% url 'socialaccount_signup' %}?provider=microsoft" class="btn btn-outline-primary">
-                            <i class="bi bi-microsoft"></i> Sign up with Microsoft
+                        <a href="{% url 'socialaccount_connections' %}" class="btn btn-outline-primary mx-2">
+                            <i class="bi bi-microsoft"></i> Microsoft
                         </a>
                     </div>
                 </div>

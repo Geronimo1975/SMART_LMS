@@ -1,69 +1,153 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Dashboard - Smart Authentication System{% endblock %}
+{% block title %}Dashboard - LMS Platform{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Profile Summary</h5>
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Sidebar -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Navigation</strong>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </a>
+                    <a href="{% url 'course_list' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-book me-2"></i> Courses
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-list-check me-2"></i> Assignments
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-calendar3 me-2"></i> Calendar
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-chat-left-text me-2"></i> Messages
+                    </a>
+                    <a href="{% url 'profile' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-circle me-2"></i> Profile
+                    </a>
+                </div>
             </div>
-            <div class="card-body">
-                <h5>{{ user.get_full_name }}</h5>
-                <p class="text-muted">{{ user.email }}</p>
-                <hr>
-                <div class="d-grid">
-                    <a href="{% url 'profile' %}" class="btn btn-outline-primary">Edit Profile</a>
+
+            <!-- User info card -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>User Info</strong>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.get_full_name }}</h5>
+                    <p class="card-text">{{ user.email }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">Last login: {{ user.last_login|date:"j M Y, H:i" }}</small>
+                    </p>
                 </div>
             </div>
         </div>
         
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Account Settings</h5>
-            </div>
-            <div class="list-group list-group-flush">
-                <a href="{% url 'account_email' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    Email Addresses
-                    <span class="badge bg-primary rounded-pill">{{ user.emailaddress_set.verified.count }}</span>
-                </a>
-                <a href="{% url 'account_change_password' %}" class="list-group-item list-group-item-action">
-                    Change Password
-                </a>
-                <a href="{% url 'socialaccount_connections' %}" class="list-group-item list-group-item-action">
-                    Connected Accounts
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Dashboard</h5>
-            </div>
-            <div class="card-body">
-                <h4>Welcome to your Dashboard, {{ user.first_name }}!</h4>
-                <p>This is your personal dashboard where you can manage your courses, track your progress, and access learning materials.</p>
-                
-                <div class="alert alert-info mt-4">
-                    <h5>Getting Started</h5>
-                    <p>You're all set up with a fully secure account! Your profile includes:</p>
-                    <ul>
-                        <li>GDPR-compliant data handling</li>
-                        <li>Secure authentication</li>
-                        <li>Social login connections (if enabled)</li>
-                    </ul>
+        <div class="col-md-9">
+            <!-- Welcome message -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title">Welcome, {{ user.first_name }}!</h2>
+                    <p class="card-text">This is your dashboard where you can manage your courses, assignments, and track your learning progress.</p>
                 </div>
-                
-                <div class="mt-4">
-                    <h5>Quick Actions</h5>
-                    <div class="d-flex gap-2 mt-3">
-                        <a href="{% url 'profile' %}" class="btn btn-outline-primary">Update Profile</a>
-                        <a href="{% url 'account_email' %}" class="btn btn-outline-primary">Manage Emails</a>
-                        <a href="{% url 'socialaccount_connections' %}" class="btn btn-outline-primary">Connected Accounts</a>
+            </div>
+            
+            <!-- Activity summary -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Activity Summary</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-sm-4 mb-3">
+                            <h3>{{ teaching_courses.count|add:enrolled_courses.count }}</h3>
+                            <p>Active Courses</p>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <h3>0</h3>
+                            <p>Assignments Due</p>
+                        </div>
+                        <div class="col-sm-4 mb-3">
+                            <h3>0</h3>
+                            <p>Unread Messages</p>
+                        </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- My courses -->
+            {% if teaching_courses or enrolled_courses %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <strong>My Courses</strong>
+                    <a href="{% url 'course_list' %}" class="btn btn-sm btn-light">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if teaching_courses %}
+                    <h5 class="mb-3"><i class="bi bi-person-workspace me-2"></i> Teaching</h5>
+                    <div class="list-group mb-4">
+                        {% for course in teaching_courses %}
+                        <a href="{% url 'course_detail' slug=course.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ course.title }}</h6>
+                                <p class="mb-1 text-muted small">{{ course.students.count }} students enrolled</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">Instructor</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if enrolled_courses %}
+                    <h5 class="mb-3"><i class="bi bi-mortarboard me-2"></i> Enrolled</h5>
+                    <div class="list-group">
+                        {% for course in enrolled_courses %}
+                        <a href="{% url 'course_detail' slug=course.slug %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ course.title }}</h6>
+                                <p class="mb-1 text-muted small">Instructor: {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                            </div>
+                            <span class="badge bg-success rounded-pill">Student</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>My Courses</strong>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-3">You are not enrolled in any courses yet.</p>
+                    <a href="{% url 'course_list' %}" class="btn btn-primary">Browse Courses</a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Upcoming tasks -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Upcoming Tasks</strong>
+                </div>
+                <div class="card-body">
+                    <p class="text-center text-muted">No upcoming tasks at this time.</p>
+                </div>
+            </div>
+            
+            <!-- Recent activity -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>Recent Activity</strong>
+                </div>
+                <div class="card-body">
+                    <p class="text-center text-muted">No recent activity to display.</p>
                 </div>
             </div>
         </div>

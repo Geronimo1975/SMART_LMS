@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from allauth.account.forms import SignupForm
+
 from .models import UserProfile
 
 class UserProfileForm(forms.ModelForm):
@@ -18,6 +19,7 @@ class UserProfileForm(forms.ModelForm):
             'terms_accepted': 'I accept the Terms and Conditions',
         }
 
+# Make sure this class is defined and exported correctly
 class CustomSignupForm(SignupForm):
     first_name = forms.CharField(max_length=30, label='First Name', required=True)
     last_name = forms.CharField(max_length=30, label='Last Name', required=True)
@@ -38,16 +40,21 @@ class CustomSignupForm(SignupForm):
     )
 
     def save(self, request):
+        # Save the standard user data first
         user = super(CustomSignupForm, self).save(request)
+        
+        # Update the User object with first and last name
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.save()
         
-        # Get profile
-        profile = user.profile
-        profile.gdpr_consent = self.cleaned_data.get('gdpr_consent', False)
-        profile.marketing_consent = self.cleaned_data.get('marketing_consent', False)
-        profile.terms_accepted = self.cleaned_data.get('terms_accepted', False)
-        profile.save()
+        # Update the UserProfile with consent data
+        user.profile.gdpr_consent = self.cleaned_data['gdpr_consent']
+        user.profile.marketing_consent = self.cleaned_data['marketing_consent']
+        user.profile.terms_accepted = self.cleaned_data['terms_accepted']
+        user.profile.save()
         
         return user
+
+# Make sure this is exported
+__all__ = ['UserProfileForm', 'CustomSignupForm']

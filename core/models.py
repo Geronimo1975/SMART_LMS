@@ -1,3 +1,4 @@
 from django.db import models
 
-# Currently no models are needed for the core app
+# Create your models here.
+# For core app-specific models

@@ -1,48 +1,42 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
+{% load crispy_forms_tags %}
 
-{% block title %}My Profile - Smart Learning Platform{% endblock %}
+{% block title %}User Profile - LMS Platform{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-3">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Profile</h5>
-            </div>
-            <div class="card-body">
-                <div class="text-center mb-3">
-                    <div class="bg-light rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
-                        <span class="display-4 text-muted">{{ user.first_name|first }}{{ user.last_name|first }}</span>
-                    </div>
-                </div>
-                <h4 class="text-center">{{ user.first_name }} {{ user.last_name }}</h4>
-                <p class="text-center text-muted">{{ user.email }}</p>
-                <hr>
-                <div class="small">
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-9">
+<div class="row justify-content-center">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Edit Profile</h5>
+                <h4 class="mb-0">Your Profile</h4>
             </div>
             <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    
-                    <h5 class="mb-3">Privacy Settings</h5>
-                    {% bootstrap_form form %}
-                    
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Account Information</h5>
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Full Name:</strong> {{ user.get_full_name }}</p>
+                        <p><strong>Member Since:</strong> {{ user.date_joined|date:"j M Y" }}</p>
                     </div>
-                </form>
+                    <div class="col-md-6">
+                        <h5>Privacy Preferences</h5>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary mt-3">Update Preferences</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Account Actions</h5>
+                        <a href="{% url 'account_email' %}" class="btn btn-outline-primary me-2">Change Email</a>
+                        <a href="{% url 'account_change_password' %}" class="btn btn-outline-primary me-2">Change Password</a>
+                        <a href="{% url 'account_logout' %}" class="btn btn-outline-danger">Logout</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

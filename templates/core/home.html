@@ -1,47 +1,95 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Home - Smart Authentication System{% endblock %}
+{% block title %}Welcome to LMS Platform{% endblock %}
 
 {% block content %}
-<div class="jumbotron bg-light p-4 rounded">
-    <h1 class="display-4">Welcome to Smart LMS</h1>
-    <p class="lead">A secure, modern learning management system with industry-standard authentication and GDPR compliance.</p>
-    <hr class="my-4">
-    <p>Get started by creating an account or sign in with your existing credentials.</p>
-    {% if not user.is_authenticated %}
-    <div class="d-flex gap-2 mt-3">
-        <a href="{% url 'account_login' %}" class="btn btn-primary">Login</a>
-        <a href="{% url 'account_signup' %}" class="btn btn-outline-primary">Sign Up</a>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">Welcome to LMS Platform</h1>
+            <p class="lead">The modern learning management system for educational excellence</p>
+            
+            <div class="mt-5">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                    <a href="{% url 'course_list' %}" class="btn btn-outline-primary btn-lg ms-3">Browse Courses</a>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="btn btn-primary btn-lg me-3">Login</a>
+                    <a href="{% url 'account_signup' %}" class="btn btn-outline-primary btn-lg">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    {% else %}
-    <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
-    {% endif %}
-</div>
 
-<div class="row mt-5">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Secure Authentication</h5>
-                <p class="card-text">Our platform includes industry-standard security practices with multiple authentication options.</p>
+    <div class="row mt-5 pt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-check mb-3" style="font-size: 2rem;"></i>
+                    <h3 class="card-title">For Students</h3>
+                    <p class="card-text">Access courses, submit assignments, track your progress, and connect with instructors.</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center">
+                    <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Find Courses</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-workspace mb-3" style="font-size: 2rem;"></i>
+                    <h3 class="card-title">For Teachers</h3>
+                    <p class="card-text">Create courses, manage assignments, grade student work, and provide feedback.</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center">
+                    <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Manage Courses</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-building mb-3" style="font-size: 2rem;"></i>
+                    <h3 class="card-title">For Institutions</h3>
+                    <p class="card-text">Organize educational activities, track performance metrics, and ensure compliance.</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center">
+                    <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Explore Platform</a>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">GDPR Compliant</h5>
-                <p class="card-text">We take data privacy seriously and comply with all GDPR requirements.</p>
+
+    {% if featured_courses %}
+    <div class="mt-5 pt-3">
+        <h2 class="text-center mb-4">Featured Courses</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for course in featured_courses %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                    {% else %}
+                    <div class="card-img-top bg-light text-center py-5">
+                        <i class="bi bi-book" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text">{{ course.description|truncatewords:20 }}</p>
+                        <p class="text-muted">Instructor: {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a href="{% url 'course_detail' slug=course.slug %}" class="btn btn-outline-primary">View Details</a>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'course_list' %}" class="btn btn-primary">View All Courses</a>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Social Login</h5>
-                <p class="card-text">Sign in with your Google or Microsoft account for convenient access.</p>
-            </div>
-        </div>
-    </div>
+    {% endif %}
 </div>
 {% endblock %}

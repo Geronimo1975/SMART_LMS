@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UNI_online{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Open+Sans:wght@400;600&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="main-wrapper">
+        {% if user.is_authenticated %}
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="navbar-brand">
+                <span>UNI_online</span>
+            </div>
+            
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if '/courses/' in request.path %}active{% endif %}" href="{% url 'course_list' %}">
+                        <i class="fas fa-book"></i> Courses
+                    </a>
+                </li>
+                
+                {% if user.role == 'teacher' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'course_create' %}">
+                        <i class="fas fa-plus-circle"></i> Create Course
+                    </a>
+                </li>
+                {% endif %}
+                
+                <div class="nav-divider"></div>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if '/notifications/' in request.path %}active{% endif %}" href="{% url 'notifications' %}">
+                        <i class="fas fa-bell"></i> Notifications
+                        {% with unread_count=user.notifications.filter.count %}
+                            {% if unread_count > 0 %}
+                            <span class="notification-badge">{{ unread_count }}</span>
+                            {% endif %}
+                        {% endwith %}
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if '/profile/' in request.path %}active{% endif %}" href="{% url 'profile' %}">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                
+                <div class="nav-divider"></div>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        {% endif %}
+        
+        <!-- Main Content -->
+        <main class="content">
+            {% if user.is_authenticated %}
+            <div class="header">
+                <h1 class="header-title">{% block header_title %}UNI_online{% endblock %}</h1>
+            </div>
+            {% endif %}
+            
+            <!-- Messages -->
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Main Content Area -->
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="/static/js/main.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

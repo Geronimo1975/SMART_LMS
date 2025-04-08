@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ material.title }} - UNI_online{% endblock %}
+{% block header_title %}Material: {{ material.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">Material Details</h3>
+                <div>
+                    {% if user.role == 'teacher' and user == material.course.teacher %}
+                    <a href="{% url 'material_edit' pk=material.pk %}" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'material_delete' pk=material.pk %}" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4>{{ material.title }}</h4>
+                    
+                    {% if material.description %}
+                    <div class="mb-4">
+                        <h5>Description</h5>
+                        <p>{{ material.description|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-4">
+                        <p><strong>Course:</strong> <a href="{% url 'course_detail' pk=course.pk %}">{{ course.code }}: {{ course.title }}</a></p>
+                        <p><strong>Added:</strong> {{ material.uploaded_at|date:"F d, Y" }}</p>
+                        <p><strong>Type:</strong> 
+                            {% if material.material_type == 'file' %}
+                            <span class="badge badge-primary">File</span>
+                            {% elif material.material_type == 'link' %}
+                            <span class="badge badge-info">External Link</span>
+                            {% else %}
+                            <span class="badge badge-secondary">Text Content</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    {% if material.material_type == 'file' and material.file %}
+                    <div class="mt-4">
+                        <h5>Download Material</h5>
+                        <a href="{{ material.file.url }}" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-download"></i> Download File
+                        </a>
+                    </div>
+                    {% elif material.material_type == 'link' and material.link %}
+                    <div class="mt-4">
+                        <h5>External Resource</h5>
+                        <a href="{{ material.link }}" class="btn btn-info" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Visit External Resource
+                        </a>
+                    </div>
+                    {% elif material.material_type == 'text' and material.text_content %}
+                    <div class="mt-4">
+                        <h5>Content</h5>
+                        <div class="p-3 border rounded bg-light">
+                            {{ material.text_content|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">About This Course</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>{{ course.code }}:</strong> {{ course.title }}</p>
+                            <p><strong>Teacher:</strong> {{ course.teacher.get_full_name }}</p>
+                            <div class="mb-3">
+                                <a href="{% url 'course_detail' pk=course.pk %}" class="btn btn-sm btn-secondary btn-block">
+                                    <i class="fas fa-book"></i> Go to Course
+                                </a>
+                            </div>
+                            
+                            <h6>Other Materials</h6>
+                            <ul class="list-group list-group-flush">
+                                {% for other_material in course.materials.all %}
+                                    {% if other_material != material %}
+                                    <li class="list-group-item">
+                                        <a href="{% url 'material_detail' pk=other_material.pk %}">{{ other_material.title }}</a>
+                                        <small class="text-muted d-block">{{ other_material.uploaded_at|date:"M d, Y" }}</small>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <a href="{% url 'course_detail' pk=course.pk %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Course
+        </a>
+    </div>
+</div>
+{% endblock %}

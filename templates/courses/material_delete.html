@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Material - UNI_online{% endblock %}
+{% block header_title %}Delete Material{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h3 class="card-title">Delete Material: {{ material.title }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <h4 class="alert-heading">Warning!</h4>
+                <p>You are about to delete this course material. This action <strong>cannot be undone</strong>.</p>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Material Information</h5>
+                    <p><strong>Title:</strong> {{ material.title }}</p>
+                    <p><strong>Course:</strong> {{ material.course.code }}: {{ material.course.title }}</p>
+                    <p><strong>Type:</strong> 
+                        {% if material.material_type == 'file' %}
+                        File
+                        {% elif material.material_type == 'link' %}
+                        External Link
+                        {% else %}
+                        Text Content
+                        {% endif %}
+                    </p>
+                    <p><strong>Uploaded:</strong> {{ material.uploaded_at|date:"F d, Y" }}</p>
+                </div>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger">Yes, Delete This Material</button>
+                    <a href="{% url 'material_detail' pk=material.pk %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

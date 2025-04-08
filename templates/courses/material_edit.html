@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Material - UNI_online{% endblock %}
+{% block header_title %}Edit Material: {{ material.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Edit Course Material</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">Material Title</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.title.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.description.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.material_type.id_for_label }}">Material Type</label>
+                    {{ form.material_type }}
+                    {% if form.material_type.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.material_type.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group" id="file-upload-group">
+                    <label for="{{ form.file.id_for_label }}">Upload File</label>
+                    {% if material.file %}
+                    <div class="mb-2">
+                        <p>Current file: <a href="{{ material.file.url }}" target="_blank">{{ material.file.name }}</a></p>
+                    </div>
+                    {% endif %}
+                    {{ form.file }}
+                    {% if form.file.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.file.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Upload a new file to replace the current one, or leave blank to keep the existing file.</small>
+                </div>
+                
+                <div class="form-group" id="link-group">
+                    <label for="{{ form.link.id_for_label }}">External Link</label>
+                    {{ form.link }}
+                    {% if form.link.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.link.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Provide a URL to an external resource.</small>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Update Material</button>
+                    <a href="{% url 'material_detail' pk=material.pk %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const materialTypeSelect = document.getElementById('{{ form.material_type.id_for_label }}');
+        const fileUploadGroup = document.getElementById('file-upload-group');
+        const linkGroup = document.getElementById('link-group');
+        
+        function updateFormFields() {
+            const selectedValue = materialTypeSelect.value;
+            
+            if (selectedValue === 'file') {
+                fileUploadGroup.style.display = 'block';
+                linkGroup.style.display = 'none';
+            } else if (selectedValue === 'link') {
+                fileUploadGroup.style.display = 'none';
+                linkGroup.style.display = 'block';
+            } else {
+                fileUploadGroup.style.display = 'none';
+                linkGroup.style.display = 'none';
+            }
+        }
+        
+        // Set initial state
+        updateFormFields();
+        
+        // Update on change
+        materialTypeSelect.addEventListener('change', updateFormFields);
+    });
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,203 @@
+/* Dashboard specific styles */
+
+/* Dashboard summary cards */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-card-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary);
+}
+
+.stat-card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: var(--spacing-xs);
+    color: var(--secondary);
+}
+
+.stat-card-label {
+    color: #6c757d;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+}
+
+/* Course list */
+.course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.course-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.course-code {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Upcoming assignments */
+.upcoming-list {
+    margin-bottom: var(--spacing-lg);
+}
+
+.upcoming-item {
+    padding: var(--spacing-sm);
+    border-left: 4px solid var(--primary);
+    background-color: white;
+    margin-bottom: var(--spacing-sm);
+    box-shadow: var(--box-shadow);
+}
+
+.upcoming-item:hover {
+    box-shadow: var(--box-shadow-lg);
+}
+
+.upcoming-date {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Notification badge */
+.notification-badge {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    background-color: var(--danger);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    margin-left: var(--spacing-xs);
+}
+
+/* Activity feed */
+.activity-feed {
+    margin-bottom: var(--spacing-lg);
+}
+
+.activity-item {
+    padding: var(--spacing-sm);
+    background-color: white;
+    margin-bottom: var(--spacing-sm);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+}
+
+.activity-item:hover {
+    box-shadow: var(--box-shadow-lg);
+}
+
+.activity-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: var(--spacing-xs);
+}
+
+/* Dashboard columns layout */
+.dashboard-columns {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.dashboard-main {
+    grid-column: 1;
+}
+
+.dashboard-sidebar {
+    grid-column: 2;
+}
+
+@media (max-width: 992px) {
+    .dashboard-columns {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-main,
+    .dashboard-sidebar {
+        grid-column: 1;
+    }
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: var(--spacing-xs);
+}
+
+.status-active {
+    background-color: var(--accent);
+}
+
+.status-inactive {
+    background-color: var(--danger);
+}
+
+.status-pending {
+    background-color: var(--warning);
+}
+
+/* Progress bar */
+.progress {
+    height: 8px;
+    overflow: hidden;
+    background-color: var(--light-gray);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: var(--border-radius-sm);
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #6c757d;
+}

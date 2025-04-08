@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - UNI_online{% endblock %}
+{% block header_title %}Courses{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if user.role == 'teacher' %}
+    <div class="mb-4">
+        <a href="{% url 'course_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Create New Course
+        </a>
+    </div>
+    {% endif %}
+    
+    {% if courses %}
+    <div class="course-list">
+        {% for course in courses %}
+        <div class="card course-card">
+            <div class="card-body">
+                <div class="course-card-header">
+                    <div>
+                        <div class="course-code">{{ course.code }}</div>
+                        <h4>{{ course.title }}</h4>
+                    </div>
+                    {% if course.is_active %}
+                    <span class="status-indicator status-active" title="Active"></span>
+                    {% else %}
+                    <span class="status-indicator status-inactive" title="Inactive"></span>
+                    {% endif %}
+                </div>
+                <p>{{ course.description|truncatechars:150 }}</p>
+                <div class="mb-3">
+                    <small class="text-muted">
+                        <strong>Term:</strong> {{ course.start_date|date:"M d, Y" }} - {{ course.end_date|date:"M d, Y" }}
+                    </small>
+                </div>
+                <div class="course-card-footer">
+                    {% if user.role == 'teacher' %}
+                    <small class="text-muted">Students: {{ course.student_count }}</small>
+                    {% else %}
+                    <small class="text-muted">Teacher: {{ course.teacher.get_full_name }}</small>
+                    {% endif %}
+                    <div>
+                        <a href="{% url 'course_detail' pk=course.pk %}" class="btn btn-sm btn-primary">View Course</a>
+                        {% if user.role == 'teacher' and user == course.teacher %}
+                        <a href="{% url 'course_edit' pk=course.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        {% if user.role == 'teacher' %}
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>You haven't created any courses yet</h4>
+                <p>Get started by creating your first course</p>
+                <a href="{% url 'course_create' %}" class="btn btn-primary">Create Course</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>You're not enrolled in any courses yet</h4>
+                <p>Contact your teacher to get enrolled in a course</p>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

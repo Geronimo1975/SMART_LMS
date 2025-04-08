@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Grade Submission - UNI_online{% endblock %}
+{% block header_title %}Grade Submission for: {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Student Submission</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4>Assignment: {{ assignment.title }}</h4>
+                    <p><strong>Course:</strong> <a href="{% url 'course_detail' pk=course.pk %}">{{ course.code }}: {{ course.title }}</a></p>
+                    <p><strong>Student:</strong> {{ submission.student.get_full_name }}</p>
+                    <p><strong>Submitted:</strong> {{ submission.submitted_at|date:"F d, Y, h:i A" }}
+                       {% if submission.is_late %}
+                       <span class="badge badge-warning">Late</span>
+                       {% endif %}
+                    </p>
+                    
+                    {% if submission.file %}
+                    <div class="mt-4">
+                        <h5>Uploaded File</h5>
+                        <a href="{{ submission.file.url }}" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-download"></i> Download Submission
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if submission.text %}
+                    <div class="mt-4">
+                        <h5>Text Submission</h5>
+                        <div class="p-3 border rounded bg-light">
+                            {{ submission.text|linebreaks }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Assignment Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Due Date:</strong> {{ assignment.due_date|date:"F d, Y, h:i A" }}</p>
+                            <p><strong>Total Points:</strong> {{ assignment.total_points }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if submission.is_late %}
+                                <span class="badge badge-warning">Late Submission</span>
+                                {% else %}
+                                <span class="badge badge-success">On Time</span>
+                                {% endif %}
+                            </p>
+                            
+                            {% if assignment.file %}
+                            <div class="mt-2">
+                                <a href="{{ assignment.file.url }}" class="btn btn-sm btn-secondary" target="_blank">
+                                    <i class="fas fa-download"></i> Assignment File
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Grading</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.points.id_for_label }}">Points (max: {{ assignment.total_points }})</label>
+                    {{ form.points }}
+                    {% if form.points.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.points.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="form-text text-muted">{{ form.points.help_text }}</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.feedback.id_for_label }}">Feedback</label>
+                    {{ form.feedback }}
+                    {% if form.feedback.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.feedback.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Provide constructive feedback to the student about their submission.</small>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Submit Grade</button>
+                    <a href="{% url 'submission_detail' pk=submission.pk %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

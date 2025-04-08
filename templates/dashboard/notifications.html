@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - UNI_online{% endblock %}
+{% block header_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">Your Notifications</h3>
+                <div>
+                    {% if notifications.filter.is_read=False.exists %}
+                    <a href="{% url 'mark_all_notifications_as_read' %}" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-check-double"></i> Mark All as Read
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if notifications %}
+            <div class="activity-feed">
+                {% for notification in notifications %}
+                <div class="activity-item {% if not notification.is_read %}unread{% endif %}" data-notification-id="{{ notification.id }}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h4>{{ notification.title }}</h4>
+                        {% if not notification.is_read %}
+                        <span class="badge badge-primary">New</span>
+                        {% endif %}
+                    </div>
+                    <p>{{ notification.message|linebreaks }}</p>
+                    <div class="activity-meta">
+                        <span>{{ notification.created_at|date:"F d, Y, h:i A" }}</span>
+                        <div>
+                            {% if not notification.is_read %}
+                            <a href="{% url 'mark_notification_as_read' pk=notification.id %}" class="btn btn-sm btn-link">
+                                <i class="fas fa-check"></i> Mark as Read
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center">
+                <p>You don't have any notifications yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-// Main JavaScript file for LMS Platform
+// Main JavaScript file for AI-powered LMS Platform
 
 document.addEventListener('DOMContentLoaded', function() {
     // Enable Bootstrap tooltips
@@ -12,6 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl);
     });
+    
+    // Initialize Neural Network Animation
+    initNeuralNetwork();
+    
+    // Initialize typing effect
+    initTypingEffect();
+    
+    // Initialize parallax effect
+    initParallaxEffect();
     
     // Handle cookie consent interactions
     const cookieConsentBanner = document.querySelector('.cookie-consent-banner');
@@ -143,3 +152,139 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Neural Network Animation
+function initNeuralNetwork() {
+    const neuralNetwork = document.querySelector('.neural-network');
+    if (!neuralNetwork) return;
+    
+    // Create nodes
+    const nodeCount = 15;
+    for (let i = 0; i < nodeCount; i++) {
+        const node = document.createElement('div');
+        node.className = 'neural-node';
+        
+        // Random position
+        const top = Math.random() * 100;
+        const left = Math.random() * 100;
+        
+        node.style.top = `${top}%`;
+        node.style.left = `${left}%`;
+        
+        // Random animation delay
+        node.style.animationDelay = `${Math.random() * 2}s`;
+        
+        neuralNetwork.appendChild(node);
+    }
+    
+    // Create paths between random nodes
+    const pathCount = 20;
+    const nodes = neuralNetwork.querySelectorAll('.neural-node');
+    
+    for (let i = 0; i < pathCount; i++) {
+        const path = document.createElement('div');
+        path.className = 'neural-path';
+        
+        // Select two random nodes to connect
+        const nodeIndex1 = Math.floor(Math.random() * nodes.length);
+        let nodeIndex2 = Math.floor(Math.random() * nodes.length);
+        
+        // Ensure we don't connect to the same node
+        while (nodeIndex2 === nodeIndex1) {
+            nodeIndex2 = Math.floor(Math.random() * nodes.length);
+        }
+        
+        const node1 = nodes[nodeIndex1];
+        const node2 = nodes[nodeIndex2];
+        
+        // Get node positions
+        const node1Rect = node1.getBoundingClientRect();
+        const node2Rect = node2.getBoundingClientRect();
+        const networkRect = neuralNetwork.getBoundingClientRect();
+        
+        // Calculate relative positions
+        const x1 = (node1Rect.left + node1Rect.width/2) - networkRect.left;
+        const y1 = (node1Rect.top + node1Rect.height/2) - networkRect.top;
+        const x2 = (node2Rect.left + node2Rect.width/2) - networkRect.left;
+        const y2 = (node2Rect.top + node2Rect.height/2) - networkRect.top;
+        
+        // Calculate path length and angle
+        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+        
+        // Set path properties
+        path.style.width = `${length}px`;
+        path.style.left = `${x1}px`;
+        path.style.top = `${y1}px`;
+        path.style.transform = `rotate(${angle}deg)`;
+        path.style.animationDelay = `${Math.random() * 4}s`;
+        
+        neuralNetwork.appendChild(path);
+    }
+}
+
+// Typing effect for AI headings
+function initTypingEffect() {
+    const typingElements = document.querySelectorAll('.ai-typing');
+    
+    typingElements.forEach(function(element) {
+        const text = element.textContent;
+        element.textContent = '';
+        element.style.borderRight = '0.15em solid var(--accent-color)';
+        element.style.display = 'inline-block';
+        element.style.animation = 'blink-caret 0.75s step-end infinite';
+        
+        let i = 0;
+        const typeSpeed = element.dataset.typeSpeed || 50;
+        
+        function typeWriter() {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, typeSpeed);
+            } else {
+                // Remove cursor once typing is complete
+                setTimeout(function() {
+                    element.style.borderRight = 'none';
+                    element.style.animation = 'none';
+                }, 1500);
+            }
+        }
+        
+        // Add keyframe animation for cursor
+        if (!document.querySelector('#typing-animation-style')) {
+            const style = document.createElement('style');
+            style.id = 'typing-animation-style';
+            style.textContent = `
+                @keyframes blink-caret {
+                    from, to { border-color: transparent }
+                    50% { border-color: var(--accent-color) }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Start typing with a slight delay
+        setTimeout(typeWriter, 500);
+    });
+}
+
+// Parallax effect for AI hero section
+function initParallaxEffect() {
+    const parallaxElements = document.querySelectorAll('.parallax');
+    
+    if (parallaxElements.length > 0) {
+        window.addEventListener('mousemove', function(e) {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            parallaxElements.forEach(function(element) {
+                const speed = element.dataset.speed || 0.05;
+                const x = (window.innerWidth / 2 - mouseX) * speed;
+                const y = (window.innerHeight / 2 - mouseY) * speed;
+                
+                element.style.transform = `translateX(${x}px) translateY(${y}px)`;
+            });
+        });
+    }
+}

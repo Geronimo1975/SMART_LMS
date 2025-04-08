@@ -1,57 +1,105 @@
 {% extends 'base.html' %}
 
-{% block title %}Welcome to LMS Platform{% endblock %}
+{% block title %}AI-Powered Learning Management System | SmartLMS{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-8 text-center">
-            <h1 class="display-4 mb-4">Welcome to LMS Platform</h1>
-            <p class="lead">The modern learning management system for educational excellence</p>
-            
-            <div class="mt-5">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">Go to Dashboard</a>
-                    <a href="{% url 'course_list' %}" class="btn btn-outline-primary btn-lg ms-3">Browse Courses</a>
-                {% else %}
-                    <a href="{% url 'account_login' %}" class="btn btn-primary btn-lg me-3">Login</a>
-                    <a href="{% url 'account_signup' %}" class="btn btn-outline-primary btn-lg">Sign Up</a>
-                {% endif %}
+<!-- AI Hero Section -->
+<section class="ai-hero mb-5">
+    <div class="container ai-hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="ai-typing" data-type-speed="70">AI-Powered Learning</h1>
+                <p>Experience the future of education with our adaptive learning platform. 
+                   Using cutting-edge AI, we personalize your educational journey to maximize your potential.</p>
+                <div class="mt-4 d-flex flex-wrap gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg ai-glow">Go to Dashboard</a>
+                        <a href="{% url 'course_list' %}" class="btn btn-outline-primary btn-lg">Explore Courses</a>
+                    {% else %}
+                        <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg ai-glow">Explore Courses</a>
+                        <div class="dropdown d-inline-block">
+                            <button class="btn btn-outline-primary btn-lg dropdown-toggle" type="button" id="loginOptions" data-bs-toggle="dropdown" aria-expanded="false">
+                                Login / Register
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="loginOptions">
+                                <li><a class="dropdown-item" href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
+                                <li><a class="dropdown-item" href="{% url 'account_signup' %}"><i class="bi bi-person-plus me-2"></i>Sign Up</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'socialaccount_connections' %}"><i class="bi bi-google me-2"></i>Login with Google</a></li>
+                                <li><a class="dropdown-item" href="{% url 'socialaccount_connections' %}"><i class="bi bi-microsoft me-2"></i>Login with Microsoft</a></li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="neural-network"></div>
             </div>
         </div>
     </div>
+</section>
 
-    <div class="row mt-5 pt-5">
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+<!-- AI Features Section -->
+<section class="container mb-5">
+    <div class="ai-features-grid">
+        <div class="ai-feature-card">
+            <div class="card-body text-center p-4">
+                <div class="ai-icon"><i class="bi bi-robot"></i></div>
+                <h3 class="card-title">AI-Powered Learning</h3>
+                <p class="card-text">Our platform adapts to your learning style, preferences, and pace, offering personalized recommendations and insights.</p>
+            </div>
+        </div>
+        <div class="ai-feature-card">
+            <div class="card-body text-center p-4">
+                <div class="ai-icon"><i class="bi bi-stars"></i></div>
+                <h3 class="card-title">Smart Recommendations</h3>
+                <p class="card-text">Discover courses that match your interests and goals with our intelligent recommendation system.</p>
+            </div>
+        </div>
+        <div class="ai-feature-card">
+            <div class="card-body text-center p-4">
+                <div class="ai-icon"><i class="bi bi-graph-up"></i></div>
+                <h3 class="card-title">Adaptive Assessment</h3>
+                <p class="card-text">Get real-time feedback on your progress with adaptive assessments that identify strengths and areas for improvement.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Role-Based Features -->
+<section class="container mb-5">
+    <h2 class="text-center mb-4">Tailored for Everyone</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="bi bi-person-check mb-3" style="font-size: 2rem;"></i>
-                    <h3 class="card-title">For Students</h3>
-                    <p class="card-text">Access courses, submit assignments, track your progress, and connect with instructors.</p>
+                    <i class="bi bi-person-check mb-3" style="font-size: 2.5rem; color: var(--primary-color);"></i>
+                    <h3 class="card-title">For Learners</h3>
+                    <p class="card-text">Access engaging courses with personalized learning paths, AI-powered study suggestions, and progress tracking.</p>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-center">
                     <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Find Courses</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+        <div class="col-md-4">
+            <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="bi bi-person-workspace mb-3" style="font-size: 2rem;"></i>
-                    <h3 class="card-title">For Teachers</h3>
-                    <p class="card-text">Create courses, manage assignments, grade student work, and provide feedback.</p>
+                    <i class="bi bi-person-workspace mb-3" style="font-size: 2.5rem; color: var(--primary-color);"></i>
+                    <h3 class="card-title">For Educators</h3>
+                    <p class="card-text">Create engaging content with AI assistance, gain insights into student performance, and automate grading.</p>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-center">
                     <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Manage Courses</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+        <div class="col-md-4">
+            <div class="card h-100">
                 <div class="card-body text-center">
-                    <i class="bi bi-building mb-3" style="font-size: 2rem;"></i>
+                    <i class="bi bi-building mb-3" style="font-size: 2.5rem; color: var(--primary-color);"></i>
                     <h3 class="card-title">For Institutions</h3>
-                    <p class="card-text">Organize educational activities, track performance metrics, and ensure compliance.</p>
+                    <p class="card-text">Access comprehensive analytics, ensure compliance with learning standards, and scale education effortlessly.</p>
                 </div>
                 <div class="card-footer bg-transparent border-0 text-center">
                     <a href="{% url 'course_list' %}" class="btn btn-outline-primary">Explore Platform</a>
@@ -59,37 +107,151 @@
             </div>
         </div>
     </div>
+</section>
 
-    {% if featured_courses %}
-    <div class="mt-5 pt-3">
-        <h2 class="text-center mb-4">Featured Courses</h2>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for course in featured_courses %}
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    {% if course.image %}
-                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
-                    {% else %}
-                    <div class="card-img-top bg-light text-center py-5">
-                        <i class="bi bi-book" style="font-size: 3rem;"></i>
+<!-- Featured Courses Section -->
+{% if featured_courses %}
+<section class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Featured Courses</h2>
+        <a href="{% url 'course_list' %}" class="btn btn-outline-primary">View All</a>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for course in featured_courses %}
+        <div class="col">
+            <div class="card h-100 course-card">
+                {% if course.image %}
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                {% else %}
+                <div class="card-img-top bg-light text-center py-5">
+                    <i class="bi bi-book" style="font-size: 3rem; color: var(--primary-color);"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncatewords:15 }}</p>
+                </div>
+                <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                    <span class="text-muted"><i class="bi bi-person me-1"></i> {{ course.instructor.get_full_name|default:course.instructor.username }}</span>
+                    <a href="{% url 'course_detail' slug=course.slug %}" class="btn btn-sm btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- AI Stats Section -->
+<section class="container mb-5">
+    <div class="card bg-gradient border-0" style="background: linear-gradient(135deg, var(--dark-color), var(--primary-color));">
+        <div class="card-body py-5">
+            <div class="row text-center text-white">
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="display-4 fw-bold mb-2">10k+</div>
+                    <p class="mb-0">Active Learners</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="display-4 fw-bold mb-2">500+</div>
+                    <p class="mb-0">AI-Enhanced Courses</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="display-4 fw-bold mb-2">98%</div>
+                    <p class="mb-0">Student Satisfaction</p>
+                </div>
+                <div class="col-md-3">
+                    <div class="display-4 fw-bold mb-2">24/7</div>
+                    <p class="mb-0">AI Learning Assistant</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="container mb-5">
+    <h2 class="text-center mb-4">What Our Users Say</h2>
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="text-warning">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
                     </div>
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ course.title }}</h5>
-                        <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                        <p class="text-muted">Instructor: {{ course.instructor.get_full_name|default:course.instructor.username }}</p>
-                    </div>
-                    <div class="card-footer bg-white">
-                        <a href="{% url 'course_detail' slug=course.slug %}" class="btn btn-outline-primary">View Details</a>
+                    <p class="card-text">"The AI-powered recommendations have completely transformed my learning experience. I'm discovering courses I never would have found on my own."</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex align-items-center">
+                        <div class="fw-bold">Sarah J.</div>
+                        <div class="ms-auto small text-muted">Data Science Student</div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        <div class="text-center mt-4">
-            <a href="{% url 'course_list' %}" class="btn btn-primary">View All Courses</a>
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="text-warning">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                    </div>
+                    <p class="card-text">"As an educator, the AI-assisted grading and analytics save me hours each week. I can focus more on creating quality content and less on administrative tasks."</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex align-items-center">
+                        <div class="fw-bold">Prof. Michael T.</div>
+                        <div class="ms-auto small text-muted">Computer Science Professor</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex mb-3">
+                        <div class="text-warning">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                        </div>
+                    </div>
+                    <p class="card-text">"Our university has seen a 40% increase in student engagement since implementing this AI learning platform. The data insights are invaluable."</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex align-items-center">
+                        <div class="fw-bold">Dr. Lisa R.</div>
+                        <div class="ms-auto small text-muted">Education Dean</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    {% endif %}
-</div>
+</section>
+
+<!-- Call to Action -->
+<section class="container mb-5">
+    <div class="card ai-glow">
+        <div class="card-body p-5 text-center">
+            <h2 class="mb-3">Ready to Transform Your Learning Experience?</h2>
+            <p class="lead mb-4">Join thousands of learners already benefiting from our AI-powered education platform.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg">Explore Courses</a>
+                <a href="{% url 'account_signup' %}" class="btn btn-outline-primary btn-lg">Sign Up Now</a>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

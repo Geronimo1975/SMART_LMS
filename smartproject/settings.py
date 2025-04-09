@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'core',
     'accounts',
     'courses',
+    'forums',
+    'messaging',
 ]
 
 MIDDLEWARE = [

@@ -13,6 +13,7 @@ urlpatterns = [
     path('courses/', include('courses.urls')),
     path('forums/', include('forums.urls')),
     path('messages/', include('messaging.urls')),
+    path('ai-assistant/', include('ai_assistant.urls')),
     path('', include('core.urls')),
 ]
 

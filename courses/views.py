@@ -45,11 +45,20 @@ def course_detail(request, slug):
     if can_access:
         modules = course.modules.all().prefetch_related('contents', 'assignments')
     
+    # Check if course has an AI assistant
+    has_assistant = False
+    assistant_id = None
+    if hasattr(course, 'ai_assistant'):
+        has_assistant = True
+        assistant_id = course.ai_assistant.id
+    
     context = {
         'course': course,
         'modules': modules,
         'is_instructor': is_instructor,
         'is_enrolled': is_enrolled,
+        'has_assistant': has_assistant,
+        'assistant_id': assistant_id,
     }
     
     return render(request, 'courses/course_detail.html', context)

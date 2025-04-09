@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'courses',
     'forums',
     'messaging',
+    'ai_assistant',
 ]
 
 MIDDLEWARE = [
@@ -208,3 +209,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Base URL for webhooks and external services
+# In production, this should be set to your domain
+BASE_URL = os.environ.get('BASE_URL', 'https://localhost:5000')

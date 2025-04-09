@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ assistant.name }} | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .call-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .conversation-card {
+        transition: transform 0.2s;
+    }
+    
+    .conversation-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .call-container {
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>{{ assistant.name }}</h1>
+                <span class="badge bg-{% if assistant.is_active %}success{% else %}danger{% endif %} fs-6">
+                    {% if assistant.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Assistant Details</h5>
+                        {% if is_instructor %}
+                        <div>
+                            <a href="{% url 'ai_assistant:assistant_edit' assistant.id %}" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                            <a href="{% url 'ai_assistant:assistant_delete' assistant.id %}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Course</div>
+                        <div class="col-md-9">{{ assistant.course.title }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Voice</div>
+                        <div class="col-md-9">{{ assistant.get_voice_display }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Greeting</div>
+                        <div class="col-md-9">{{ assistant.greeting_message }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3 fw-bold">Created</div>
+                        <div class="col-md-9">{{ assistant.created_at|date:"F j, Y, g:i a" }}</div>
+                    </div>
+                    {% if is_instructor and assistant.retell_agent_id %}
+                    <div class="row">
+                        <div class="col-md-3 fw-bold">RetellAI ID</div>
+                        <div class="col-md-9 text-monospace">{{ assistant.retell_agent_id }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if assistant.is_active %}
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Talk to {{ assistant.name }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="call-container text-center" id="call-container">
+                        <p class="mb-4">Get instant voice help with your course questions</p>
+                        <button id="start-call" class="call-button btn btn-primary mb-3">
+                            <i class="fas fa-phone-alt"></i>
+                        </button>
+                        <p class="text-muted">Click to start a voice call with {{ assistant.name }}</p>
+                        
+                        <div id="call-status" class="mt-3 d-none">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2" id="status-message">Connecting...</p>
+                        </div>
+                    </div>
+                    
+                    <div id="retell-container" class="d-none">
+                        <!-- RetellAI SDK will inject the call interface here -->
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Your Conversation History</h5>
+                </div>
+                <div class="card-body">
+                    {% if conversations %}
+                    <div class="list-group">
+                        {% for conversation in conversations %}
+                        <a href="{% url 'ai_assistant:conversation_detail' conversation.id %}" class="list-group-item list-group-item-action conversation-card">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Conversation</h5>
+                                <small>{{ conversation.started_at|date:"M d" }}</small>
+                            </div>
+                            <p class="mb-1">
+                                {% with first_msg=conversation.messages.first %}
+                                    {% if first_msg %}
+                                        {{ first_msg.content|truncatechars:60 }}
+                                    {% else %}
+                                        Started a conversation
+                                    {% endif %}
+                                {% endwith %}
+                            </p>
+                            <small>
+                                {{ conversation.messages.count }} messages
+                                • {{ conversation.started_at|time:"g:i a" }}
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-comments fa-3x mb-3 text-muted"></i>
+                        <p>No conversations yet</p>
+                        <p class="text-muted">
+                            Start a call with the assistant to begin your first conversation
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if assistant.is_active %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startCallBtn = document.getElementById('start-call');
+        const callContainer = document.getElementById('call-container');
+        const retellContainer = document.getElementById('retell-container');
+        const callStatus = document.getElementById('call-status');
+        const statusMessage = document.getElementById('status-message');
+        
+        startCallBtn.addEventListener('click', function() {
+            startCallBtn.disabled = true;
+            callStatus.classList.remove('d-none');
+            statusMessage.textContent = 'Connecting to assistant...';
+            
+            // Fetch call information from our backend
+            fetch('{% url "ai_assistant:start_call" assistant.id %}')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Call data received:', data);
+                    statusMessage.textContent = 'Initializing voice call...';
+                    
+                    // Here we would initialize the RetellAI SDK
+                    // This is a placeholder - the actual implementation depends on the RetellAI client SDK
+                    setTimeout(() => {
+                        callContainer.classList.add('d-none');
+                        retellContainer.classList.remove('d-none');
+                        
+                        // Mock implementation - in a real app, RetellAI SDK would be used
+                        retellContainer.innerHTML = `
+                            <div class="alert alert-info">
+                                <p><strong>Voice Call Simulation</strong></p>
+                                <p>In a real implementation, the RetellAI voice interface would appear here.</p>
+                                <p>Assistant: ${data.assistant_name}</p>
+                                <p>Agent ID: ${data.retell_agent_id || 'Not available in demo'}</p>
+                                <button class="btn btn-secondary mt-3" id="end-call">End Call</button>
+                            </div>
+                        `;
+                        
+                        document.getElementById('end-call').addEventListener('click', function() {
+                            retellContainer.classList.add('d-none');
+                            callContainer.classList.remove('d-none');
+                            startCallBtn.disabled = false;
+                            callStatus.classList.add('d-none');
+                        });
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.error('Error starting call:', error);
+                    statusMessage.textContent = 'Error connecting to assistant';
+                    startCallBtn.disabled = false;
+                    
+                    setTimeout(() => {
+                        callStatus.classList.add('d-none');
+                    }, 3000);
+                });
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

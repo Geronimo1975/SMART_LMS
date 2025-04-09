@@ -32,6 +32,31 @@
                 </div>
             </div>
             
+            {% if is_enrolled and has_assistant %}
+            <div class="mb-4">
+                <h4>AI Course Assistant</h4>
+                <div class="card border-info">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="fs-1 me-3 text-primary">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">{{ course.ai_assistant.name }}</h5>
+                                <p class="text-muted mb-0">Voice: {{ course.ai_assistant.get_voice_display }}</p>
+                            </div>
+                        </div>
+                        <p>{{ course.ai_assistant.greeting_message }}</p>
+                        <div class="text-center">
+                            <a href="{% url 'ai_assistant:assistant_detail' assistant_id %}" class="btn btn-primary">
+                                <i class="bi bi-headset me-2"></i> Talk to AI Assistant
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
             {% if is_enrolled or is_instructor %}
                 {% if modules %}
                 <div class="mb-4">
@@ -149,6 +174,15 @@
                         <a href="#" class="btn btn-outline-primary">
                             <i class="bi bi-people me-2"></i> Manage Students
                         </a>
+                        {% if has_assistant %}
+                        <a href="{% url 'ai_assistant:assistant_detail' assistant_id %}" class="btn btn-outline-primary">
+                            <i class="bi bi-robot me-2"></i> Manage AI Assistant
+                        </a>
+                        {% else %}
+                        <a href="{% url 'ai_assistant:assistant_create_for_course' course.id %}" class="btn btn-outline-primary">
+                            <i class="bi bi-robot me-2"></i> Create AI Assistant
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Conversation with {{ assistant.name }} | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .message-container {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+    
+    .message {
+        margin-bottom: 20px;
+        max-width: 80%;
+    }
+    
+    .message-user {
+        margin-left: auto;
+        background-color: #e9f5ff;
+        border-radius: 18px 18px 0 18px;
+    }
+    
+    .message-assistant {
+        margin-right: auto;
+        background-color: #f0f2f5;
+        border-radius: 18px 18px 18px 0;
+    }
+    
+    .message-system {
+        margin: 10px auto;
+        max-width: 70%;
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-align: center;
+    }
+    
+    .message-time {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Conversation with {{ assistant.name }}</h1>
+        <a href="{% url 'ai_assistant:assistant_detail' assistant.id %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Assistant
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ conversation.started_at|date:"F j, Y, g:i a" }}</h5>
+                <span class="badge bg-light text-dark">
+                    {{ messages|length }} messages
+                </span>
+            </div>
+        </div>
+        <div class="card-body message-container p-4">
+            {% for message in messages %}
+            {% if message.message_type == 'system' %}
+            <div class="message-system">
+                {{ message.content }}
+                <div class="message-time">{{ message.timestamp|time:"g:i a" }}</div>
+            </div>
+            {% else %}
+            <div class="message message-{{ message.message_type }} p-3">
+                <div class="fw-bold mb-1">
+                    {% if message.message_type == 'user' %}
+                    You
+                    {% elif message.message_type == 'assistant' %}
+                    {{ assistant.name }}
+                    {% endif %}
+                </div>
+                <div>{{ message.content|linebreaks }}</div>
+                <div class="message-time text-end">{{ message.timestamp|time:"g:i a" }}</div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            
+            {% if not messages %}
+            <div class="text-center py-4">
+                <i class="fas fa-comments fa-3x mb-3 text-muted"></i>
+                <p>No messages in this conversation</p>
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted">Course: {{ assistant.course.title }}</span>
+                </div>
+                <a href="{% url 'ai_assistant:assistant_detail' assistant.id %}" class="btn btn-primary">
+                    <i class="fas fa-phone-alt me-1"></i> Start New Call
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

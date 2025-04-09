@@ -1,28 +1,153 @@
-// Main JavaScript file for AI-powered LMS Platform
+// Main JavaScript file for SmartLMS - Lecturio-inspired Version
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Enable Bootstrap tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    console.log('SmartLMS JavaScript initialized');
+    
+    // Initialize Bootstrap components
+    initializeBootstrapComponents();
+    
+    // Initialize scroll animations
+    initializeScrollAnimations();
+    
+    // Initialize counters in the trust badges
+    initializeCounters();
+    
+    // Course list filtering
+    initializeCourseSearch();
+    
+    // Add smooth scrolling to all links
+    initializeSmoothScrolling();
+    
+    // Handle cookie consent interactions
+    initializeCookieConsent();
+    
+    // Auto-dismiss alerts after 5 seconds
+    initializeAlertAutoDismiss();
+    
+    // Dashboard active link handling
+    highlightActiveLinks();
+    
+    // Handle form validation
+    setupFormValidation();
+    
+    // Assignment due date countdown
+    initializeAssignmentCountdowns();
+    
+    // Confirm deletion modals
+    setupDeleteConfirmations();
+});
+
+// Initialize Bootstrap components
+function initializeBootstrapComponents() {
+    // Tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
     
-    // Enable Bootstrap popovers
-    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    // Popovers
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    popoverTriggerList.map(function (popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl);
     });
     
-    // Initialize Neural Network Animation
-    initNeuralNetwork();
+    // Toasts
+    const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    toastElList.map(function (toastEl) {
+        return new bootstrap.Toast(toastEl);
+    });
     
-    // Initialize typing effect
-    initTypingEffect();
+    // Dropdowns
+    const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+    dropdownElementList.map(function (dropdownToggleEl) {
+        return new bootstrap.Dropdown(dropdownToggleEl);
+    });
+}
+
+// Animated counters for trust badges
+function initializeCounters() {
+    const trustBadgeValues = document.querySelectorAll('.trust-badge-value');
     
-    // Initialize parallax effect
-    initParallaxEffect();
-    
-    // Handle cookie consent interactions
+    trustBadgeValues.forEach(badge => {
+        const target = badge.textContent;
+        const countDuration = 2000; // 2 seconds
+        let startTime;
+        
+        // Extract the numeric part (strip the + or other non-numeric symbols)
+        const numericTarget = parseInt(target.replace(/[^0-9]/g, ''));
+        const suffix = target.replace(/[0-9]/g, '');
+        
+        badge.textContent = '0' + suffix;
+        
+        const updateCounter = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / countDuration, 1);
+            
+            // Calculate current count using easeOutCubic easing function
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+            const currentCount = Math.floor(numericTarget * easedProgress);
+            
+            badge.textContent = currentCount + suffix;
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            }
+        };
+        
+        // Start the animation when element is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    requestAnimationFrame(updateCounter);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        observer.observe(badge);
+    });
+}
+
+// Course list filtering
+function initializeCourseSearch() {
+    const courseSearch = document.getElementById('course-search');
+    if (courseSearch) {
+        courseSearch.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const courseCards = document.querySelectorAll('.course-card');
+            
+            courseCards.forEach(function(card) {
+                const title = card.querySelector('.course-card-title').textContent.toLowerCase();
+                const description = card.querySelector('.course-card-text').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.closest('.col-md-6').style.display = 'block';
+                } else {
+                    card.closest('.col-md-6').style.display = 'none';
+                }
+            });
+        });
+    }
+}
+
+// Initialize smooth scrolling for anchor links
+function initializeSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (targetId !== '#') {
+                e.preventDefault();
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+// Handle cookie consent banner
+function initializeCookieConsent() {
     const cookieConsentBanner = document.querySelector('.cookie-consent-banner');
     if (cookieConsentBanner) {
         const acceptButton = cookieConsentBanner.querySelector('.accept-cookies');
@@ -30,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (acceptButton) {
             acceptButton.addEventListener('click', function() {
-                // Set cookie to remember user's choice
                 document.cookie = "cookie_consent=accepted; max-age=" + (365 * 24 * 60 * 60) + "; path=/";
                 cookieConsentBanner.style.display = 'none';
             });
@@ -38,14 +162,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (rejectButton) {
             rejectButton.addEventListener('click', function() {
-                // Set cookie to remember user's choice
                 document.cookie = "cookie_consent=rejected; max-age=" + (365 * 24 * 60 * 60) + "; path=/";
                 cookieConsentBanner.style.display = 'none';
             });
         }
     }
-    
-    // Auto-dismiss alerts after 5 seconds
+}
+
+// Auto-dismiss alerts
+function initializeAlertAutoDismiss() {
     const alerts = document.querySelectorAll('.alert:not(.alert-important)');
     alerts.forEach(function(alert) {
         setTimeout(function() {
@@ -53,8 +178,35 @@ document.addEventListener('DOMContentLoaded', function() {
             bsAlert.close();
         }, 5000);
     });
+}
+
+// Highlight active links in navigation
+function highlightActiveLinks() {
+    const currentLocation = window.location.pathname;
     
-    // Form validation enhancement
+    // Sidebar navigation
+    const navLinks = document.querySelectorAll('.list-group-item');
+    navLinks.forEach(function(link) {
+        if (link.getAttribute('href') === currentLocation) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    
+    // Main navigation
+    const mainNavLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    mainNavLinks.forEach(function(link) {
+        const href = link.getAttribute('href');
+        if (href === currentLocation || 
+            (href !== '/' && currentLocation.startsWith(href))) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// Set up form validation
+function setupFormValidation() {
     const forms = document.querySelectorAll('.needs-validation');
     Array.from(forms).forEach(function (form) {
         form.addEventListener('submit', function (event) {
@@ -65,47 +217,10 @@ document.addEventListener('DOMContentLoaded', function() {
             form.classList.add('was-validated');
         }, false);
     });
-    
-    // Dashboard active link handling
-    const currentLocation = window.location.pathname;
-    const navLinks = document.querySelectorAll('.list-group-item');
-    navLinks.forEach(function(link) {
-        if (link.getAttribute('href') === currentLocation) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-    
-    // Mobile menu handling
-    const navbarToggler = document.querySelector('.navbar-toggler');
-    if (navbarToggler) {
-        navbarToggler.addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-    }
-    
-    // Course list filtering
-    const courseSearch = document.getElementById('course-search');
-    if (courseSearch) {
-        courseSearch.addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const courseCards = document.querySelectorAll('.course-card');
-            
-            courseCards.forEach(function(card) {
-                const title = card.querySelector('.card-title').textContent.toLowerCase();
-                const description = card.querySelector('.card-text').textContent.toLowerCase();
-                
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    }
-    
-    // Assignment due date countdown
+}
+
+// Initialize countdown timers for assignments
+function initializeAssignmentCountdowns() {
     const dueDateElements = document.querySelectorAll('.due-date-countdown');
     if (dueDateElements.length > 0) {
         function updateCountdowns() {
@@ -141,8 +256,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update every minute
         setInterval(updateCountdowns, 60000);
     }
-    
-    // Confirm deletion modals
+}
+
+// Set up delete confirmation dialogs
+function setupDeleteConfirmations() {
     const deleteButtons = document.querySelectorAll('[data-confirm-delete]');
     deleteButtons.forEach(function(button) {
         button.addEventListener('click', function(event) {
@@ -151,140 +268,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
-
-// Neural Network Animation
-function initNeuralNetwork() {
-    const neuralNetwork = document.querySelector('.neural-network');
-    if (!neuralNetwork) return;
-    
-    // Create nodes
-    const nodeCount = 15;
-    for (let i = 0; i < nodeCount; i++) {
-        const node = document.createElement('div');
-        node.className = 'neural-node';
-        
-        // Random position
-        const top = Math.random() * 100;
-        const left = Math.random() * 100;
-        
-        node.style.top = `${top}%`;
-        node.style.left = `${left}%`;
-        
-        // Random animation delay
-        node.style.animationDelay = `${Math.random() * 2}s`;
-        
-        neuralNetwork.appendChild(node);
-    }
-    
-    // Create paths between random nodes
-    const pathCount = 20;
-    const nodes = neuralNetwork.querySelectorAll('.neural-node');
-    
-    for (let i = 0; i < pathCount; i++) {
-        const path = document.createElement('div');
-        path.className = 'neural-path';
-        
-        // Select two random nodes to connect
-        const nodeIndex1 = Math.floor(Math.random() * nodes.length);
-        let nodeIndex2 = Math.floor(Math.random() * nodes.length);
-        
-        // Ensure we don't connect to the same node
-        while (nodeIndex2 === nodeIndex1) {
-            nodeIndex2 = Math.floor(Math.random() * nodes.length);
-        }
-        
-        const node1 = nodes[nodeIndex1];
-        const node2 = nodes[nodeIndex2];
-        
-        // Get node positions
-        const node1Rect = node1.getBoundingClientRect();
-        const node2Rect = node2.getBoundingClientRect();
-        const networkRect = neuralNetwork.getBoundingClientRect();
-        
-        // Calculate relative positions
-        const x1 = (node1Rect.left + node1Rect.width/2) - networkRect.left;
-        const y1 = (node1Rect.top + node1Rect.height/2) - networkRect.top;
-        const x2 = (node2Rect.left + node2Rect.width/2) - networkRect.left;
-        const y2 = (node2Rect.top + node2Rect.height/2) - networkRect.top;
-        
-        // Calculate path length and angle
-        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-        
-        // Set path properties
-        path.style.width = `${length}px`;
-        path.style.left = `${x1}px`;
-        path.style.top = `${y1}px`;
-        path.style.transform = `rotate(${angle}deg)`;
-        path.style.animationDelay = `${Math.random() * 4}s`;
-        
-        neuralNetwork.appendChild(path);
-    }
 }
 
-// Typing effect for AI headings
-function initTypingEffect() {
-    const typingElements = document.querySelectorAll('.ai-typing');
+// Scroll animations for elements (revealing on scroll)
+function initializeScrollAnimations() {
+    // Add fade-in class to animate elements on scroll
+    const animatedElements = document.querySelectorAll('.card, .hero-feature-item, .category-title, .course-card');
     
-    typingElements.forEach(function(element) {
-        const text = element.textContent;
-        element.textContent = '';
-        element.style.borderRight = '0.15em solid var(--accent-color)';
-        element.style.display = 'inline-block';
-        element.style.animation = 'blink-caret 0.75s step-end infinite';
-        
-        let i = 0;
-        const typeSpeed = element.dataset.typeSpeed || 50;
-        
-        function typeWriter() {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, typeSpeed);
-            } else {
-                // Remove cursor once typing is complete
-                setTimeout(function() {
-                    element.style.borderRight = 'none';
-                    element.style.animation = 'none';
-                }, 1500);
-            }
-        }
-        
-        // Add keyframe animation for cursor
-        if (!document.querySelector('#typing-animation-style')) {
-            const style = document.createElement('style');
-            style.id = 'typing-animation-style';
-            style.textContent = `
-                @keyframes blink-caret {
-                    from, to { border-color: transparent }
-                    50% { border-color: var(--accent-color) }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-        
-        // Start typing with a slight delay
-        setTimeout(typeWriter, 500);
-    });
-}
-
-// Parallax effect for AI hero section
-function initParallaxEffect() {
-    const parallaxElements = document.querySelectorAll('.parallax');
+    if (!('IntersectionObserver' in window)) {
+        // Fallback for browsers that don't support Intersection Observer
+        animatedElements.forEach(el => el.style.opacity = '1');
+        return;
+    }
     
-    if (parallaxElements.length > 0) {
-        window.addEventListener('mousemove', function(e) {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-            
-            parallaxElements.forEach(function(element) {
-                const speed = element.dataset.speed || 0.05;
-                const x = (window.innerWidth / 2 - mouseX) * speed;
-                const y = (window.innerHeight / 2 - mouseY) * speed;
+    const observerOptions = {
+        root: null, // viewport
+        threshold: 0.1, // trigger when 10% of the element is visible
+        rootMargin: '0px 0px -50px 0px' // slight offset (triggers earlier)
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+                observer.unobserve(entry.target);
                 
-                element.style.transform = `translateX(${x}px) translateY(${y}px)`;
-            });
+                // Add animation styles
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
         });
-    }
+    }, observerOptions);
+    
+    // Prepare elements for animation
+    animatedElements.forEach(element => {
+        observer.observe(element);
+        // Set initial styles
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+    });
 }
